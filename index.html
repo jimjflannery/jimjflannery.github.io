@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToDo List</title>
+    <link rel="stylesheet" href="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.css" />
+    <script src="https://code.jquery.com/jquery-1.11.1.min.js"></script>
+    <script src="https://code.jquery.com/mobile/1.4.5/jquery.mobile-1.4.5.min.js"></script>
+    <meta name="theme-color" content="#ff4500">
+
+    <link rel="manifest" href="./manifest.json">
+    <link rel="apple-touch-icon" href="/icons/icon-128.png">
+    <style>
+        #container {
+            display: flexbox;
+            flex-direction: column;
+            width: 50%;
+            margin: auto;
+            background-color: #f0f0f0;
+            /* Light gray background */
+            border: 2px solid #000000;
+            /* Black border */
+            border-radius: 10px;
+            /* Rounded corners */
+            padding: 20px;
+            /* Inner spacing */
+            margin: 15px;
+            /* Outer spacing */
+            box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .hideme {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <div id="theform">
+            <h1>Task Input</h1>
+            <input type="text" id="task" name="task">
+            <button id="butt">Input Task</button>
+        </div>
+        <div id="list">
+            <ul id="tlist">
+
+            </ul>
+        </div>
+    </div>
+    <script>
+         if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./sw.js').then(reg => {
+                console.log('Successfully registered');
+            }).catch(err => {
+                console.log('Error while registering SW')
+            });
+        }
+        let alltasks = [];
+        window.addEventListener("DOMContentLoaded", start);
+        function start(evt) {
+            document.getElementById('butt').addEventListener('click', addIt);
+            alltasks = JSON.parse(localStorage.getItem('alltasks'))
+            display2(alltasks);
+        }
+        function addIt() {
+            // get task list out of session
+            let allT = (localStorage.getItem('alltasks'));
+            console.log(allT);
+            if (allT == "" || allT == undefined || allT == null)
+                console.log("there are no tasks")
+            else
+                alltasks = JSON.parse(localStorage.getItem('alltasks'))
+
+            task = document.getElementById("task").value;
+            removeall(alltasks);
+            alltasks.push(task)
+            display2(alltasks);
+           
+            localStorage.setItem("alltasks", JSON.stringify(alltasks));
+        }
+        function display2(alltasks){
+            removeall(alltasks);
+            let ul = document.getElementById('list');
+            for (let i = 0; i < alltasks.length; i++) {
+                let li = document.createElement('li');
+                li.textContent= alltasks[i];
+                ul.appendChild(li);
+            }
+            document.getElementById('task').value = "";
+            alleventslisteners(alltasks)
+        }
+        function removeall(alltasks){
+            
+                let allitems = document.querySelectorAll('li');
+                for(let i = 0; i < allitems.length; i++){
+                    allitems[i].remove();
+                }
+        }
+
+        function display(alltasks) {
+            displaystr = ""
+            for (let i = 0; i < alltasks.length; i++) {
+                displaystr = displaystr + "<li>" + alltasks[i] + "</li>";
+
+            }
+            alleventslisteners(alltasks)
+            document.getElementById('list').innerHTML = displaystr;
+            document.getElementById('task').value = "";
+        }
+        function alleventslisteners(alltasks) {
+            let temp;
+
+            document.getElementById('list').addEventListener('mousedown', function (event) {
+                if (event.target.tagName === 'LI') {
+                    console.log(event);
+                    temp = event.target.textContent
+                    console.log(event.target.textContent);
+                    event.target.remove();
+                }
+                //remove from alltasks
+                let templist = []
+                for (let i = 0; i < alltasks.length; i++) {
+                    if(alltasks[i]==event.target.textContent){
+                        delete alltasks[i];
+                    }
+                    else{
+                       templist.push(alltasks[i]) 
+                    }
+                }
+                localStorage.setItem("alltasks", JSON.stringify(templist));
+                
+            });
+        }
+    </script>
+</body>
+</html>
