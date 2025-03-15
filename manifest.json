@@ -2,7 +2,7 @@
     "name": "ToDo List",
     "short_name":"ToDo List",
     "description":"Web Appplication Tecj Jokes",
-    "start_url":"http://127.0.0.1:5501/localstorage/indexpwa.html",
+    "start_url":"https://jimjflannery.github.io/index.html",
     "theme_color": "#ff4500",
     "background_color":"#ffdab9",
     "display" : "minimal-ui",
