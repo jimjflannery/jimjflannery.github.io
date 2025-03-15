@@ -63,26 +63,33 @@
         function start(evt) {
             document.getElementById('butt').addEventListener('click', addIt);
             alltasks = JSON.parse(localStorage.getItem('alltasks'))
-            display2(alltasks);
+            if(alltasks != null)
+                display2(alltasks);
         }
         function addIt() {
             // get task list out of session
             let allT = (localStorage.getItem('alltasks'));
             console.log(allT);
-            if (allT == "" || allT == undefined || allT == null)
+            if (allT == "" || allT == undefined || allT == null){
                 console.log("there are no tasks")
+                localStorage.clear();
+                alltasks = [];
+            }
             else
                 alltasks = JSON.parse(localStorage.getItem('alltasks'))
-
+            if(alltasks == null){
+                alltasks = [];
+            }
             task = document.getElementById("task").value;
-            removeall(alltasks);
+            removeall();
+            //alert(alltasks);
             alltasks.push(task)
             display2(alltasks);
            
             localStorage.setItem("alltasks", JSON.stringify(alltasks));
         }
         function display2(alltasks){
-            removeall(alltasks);
+            removeall();
             let ul = document.getElementById('list');
             for (let i = 0; i < alltasks.length; i++) {
                 let li = document.createElement('li');
@@ -92,7 +99,7 @@
             document.getElementById('task').value = "";
             alleventslisteners(alltasks)
         }
-        function removeall(alltasks){
+        function removeall(){
             
                 let allitems = document.querySelectorAll('li');
                 for(let i = 0; i < allitems.length; i++){
@@ -114,7 +121,7 @@
             let temp;
 
             document.getElementById('list').addEventListener('mousedown', function (event) {
-                if (event.target.tagName === 'LI') {
+                if (event.target.tagName === 'li') {
                     console.log(event);
                     temp = event.target.textContent
                     console.log(event.target.textContent);
@@ -127,7 +134,8 @@
                         delete alltasks[i];
                     }
                     else{
-                       templist.push(alltasks[i]) 
+                        if(alltasks[i] != null)
+                            templist.push(alltasks[i]) 
                     }
                 }
                 localStorage.setItem("alltasks", JSON.stringify(templist));
